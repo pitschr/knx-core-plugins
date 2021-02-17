@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2021 Pitschmann Christoph
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses />.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Project -->
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <groupId>li.pitschmann</groupId>
+    <artifactId>knx-core-plugins</artifactId>
+    <version>0.3.1-SNAPSHOT</version>
+    <name>KNX Core Plugins</name>
+    <description>Plugins for KNX Core library to extend the core functionality with e.g. audit, statistic, REST API, ...</description>
+
+    <!-- Modules -->
+    <modules>
+        <module>api</module>
+        <module>audit</module>
+        <module>statistic</module>
+    </modules>
+
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <name>Christoph Pitschmann</name>
+            <email>github@pitschmann.li</email>
+        </developer>
+    </developers>
+
+    <!-- Source Control Management -->
+    <scm>
+        <url>https://github.com/pitschr/knx-core-plugins</url>
+        <connection>scm:git:https://github.com/pitschr/knx-core-plugins</connection>
+        <developerConnection>scm:git:https://github.com/pitschr/knx-core-plugins</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- Distribution (Maven Repository by Sonatype) -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
+    <!-- Properties -->
+    <properties>
+        <project.build.java.source>11</project.build.java.source>
+        <project.build.java.target>11</project.build.java.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Maven Plugin Versions and Licenses -->
+        <version.coveralls-maven-plugin>4.3.0</version.coveralls-maven-plugin> <!-- MIT -->
+        <version.jacoco-maven-plugin>0.8.6</version.jacoco-maven-plugin> <!-- EPL 2.0 -->
+        <version.maven-assembly-plugin>3.3.0</version.maven-assembly-plugin> <!-- Apache 2.0 -->
+        <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin> <!-- Apache 2.0 -->
+        <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin> <!-- Apache 2.0 -->
+        <version.maven-jar-plugin>3.2.0</version.maven-jar-plugin> <!-- Apache 2.0 -->
+        <version.maven-release-plugin>2.5.3</version.maven-release-plugin> <!-- Apache 2.0 -->
+        <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin> <!-- Apache 2.0 -->
+        <!-- Dependency Versions and Licenses -->
+        <version.knx-core>0.3.0</version.knx-core> <!-- GPL 3.0 -->
+        <version.assertj-core>3.18.1</version.assertj-core> <!-- Apache 2.0 -->
+        <version.junit-jupiter-engine>5.7.0</version.junit-jupiter-engine> <!-- EPL 2.0 -->
+        <version.junit-platform-runner>1.7.0</version.junit-platform-runner> <!-- EPL 2.0 -->
+        <version.logback-classic>1.2.3</version.logback-classic> <!-- EPL 1.0, LGPL 2.1 -->
+        <version.mockito-inline>3.5.15</version.mockito-inline> <!-- MIT -->
+        <version.rotating-fos>0.9.2</version.rotating-fos> <!-- Apache 2.0 -->
+        <version.slf4j>1.7.30</version.slf4j> <!-- MIT -->
+        <version.equals-verifier>3.5.2</version.equals-verifier>
+        <!-- Default Argument Line for Surefire for test stability -->
+        <setting.surefire.default.argLine>
+            -Duser.timezone=UTC
+            -Duser.language=en
+            -Duser.country=US
+            -Dfile.encoding=UTF-8
+            -Dlogback.configurationFile=logback-off.xml
+        </setting.surefire.default.argLine>
+    </properties>
+
+    <!-- Dependency Management -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- KNX Core -->
+            <dependency>
+                <groupId>li.pitschmann</groupId>
+                <artifactId>knx-core</artifactId>
+                <version>${version.knx-core}</version>
+            </dependency>
+
+            <!-- Utility -->
+            <dependency>
+                <groupId>com.vlkan.rfos</groupId>
+                <artifactId>rotating-fos</artifactId>
+                <version>${version.rotating-fos}</version>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+
+            <!-- Test -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${version.junit-jupiter-engine}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${version.junit-jupiter-engine}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-runner</artifactId>
+                <version>${version.junit-platform-runner}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.assertj-core}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
+                <version>${version.mockito-inline}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Dependencies (that should be inherited by all sub-modules as well) -->
+    <dependencies>
+        <!-- KNX Core -->
+        <dependency>
+            <groupId>li.pitschmann</groupId>
+            <artifactId>knx-core</artifactId>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- Build -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.maven-compiler-plugin}</version>
+                    <configuration>
+                        <source>${project.build.java.source}</source>
+                        <target>${project.build.java.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <compilerArgs>
+                            <arg>-Xlint</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+                <!--
+                For MANIFEST.MF File
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${version.maven-jar-plugin}</version>
+                </plugin>
+                <!--
+                For Deployment
+                * Sign JAR artifacts with GPG
+                * Release (including create JAR source and JavaDoc)
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${version.maven-gpg-plugin}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${version.maven-release-plugin}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <arguments>-Dmaven.test.skipTests=true -Dmaven.test.skip=true -Dmaven.javadoc.failOnError=false</arguments>
+                    </configuration>
+                </plugin>
+                <!--
+                Executing test in Maven
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.maven-surefire-plugin}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${version.junit-jupiter-engine}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <argLine>
+                            @{argLine}
+                            ${setting.surefire.default.argLine}
+                        </argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+        Default Profile
+        ===============
+        -->
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <argLine /> <!-- empty arg line -->
+            </properties>
+        </profile>
+        <!--
+        Release Profile
+        ===============
+        -->
+        <profile>
+            <id>release</id>
+            <properties>
+                <argLine /> <!-- empty arg line -->
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+        GitHub Actions Profile
+        ======================
+        This profile is subject to be used by 'GitHub Actions' only.
+        It is running the test and creating report for code coverage using JaCoCo maven plugin
+        and submits the code coverage report to coveralls.io site.
+        -->
+        <profile>
+            <id>github-actions</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${version.jacoco-maven-plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>${version.coveralls-maven-plugin}</version>
+                        <!-- Required due bug: https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.xml.bind</groupId>
+                                <artifactId>jaxb-api</artifactId>
+                                <version>2.3.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

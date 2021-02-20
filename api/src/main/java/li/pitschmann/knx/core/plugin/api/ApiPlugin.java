@@ -39,15 +39,15 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 /**
- * Plugin for RESTful API (web server)
+ * Plugin for KNX Core Plugin API (web server)
  */
 public final class ApiPlugin implements ExtensionPlugin {
     /**
-     * Default port for Pippo Micro Web Server (re-using the default port value)
+     * Default port
      */
     public static final IntegerConfigValue PORT = new IntegerConfigValue(
             "port",
-            () -> 8338,
+            () -> 8181,
             Objects::nonNull
     );
 

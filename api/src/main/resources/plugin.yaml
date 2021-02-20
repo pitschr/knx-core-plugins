@@ -14,5 +14,5 @@ configs:
         en: "Port"
         de: "Port"
       description:
-        en: "Port of API (used by Pippo Web Service)"
-        de: "Port von API (für Pippo Web Service)"
+        en: "Port of API"
+        de: "Port von API"

@@ -20,32 +20,35 @@ public enum FileAuditFormat {
             // Header
             "",
             // Signal Template (JSON Format)
+            "" +
             "{" +
-                    "\"time\":%1$s.%2$s," +
-                    "\"type\":%3$s" +
+                "\"datetime\":\"%1$s\"," +
+                "\"type\":%2$s" +
             "}",
             // Body Template (JSON Format)
+            "" +
             "{" +
-                "\"time\":%1$s.%2$s," +
-                "\"type\":%3$s," +
+                "\"datetime\":\"%1$s\"," +
+                "\"type\":%2$s," +
                 "\"header\":{" +
-                    "\"totalLength\":%4$s," +
-                    "\"raw\":%5$s" +
+                    "\"totalLength\":%3$s," +
+                    "\"raw\":%4$s" +
                 "}," +
                 "\"body\":{" +
                     "\"service\":{" +
-                        "\"code\":%6$s," +
-                        "\"text\":%7$s" +
+                        "\"code\":%5$s," +
+                        "\"text\":%6$s" +
                     "}," +
-                    "\"raw\":%8$s" +
+                    "\"raw\":%7$s" +
                 "}" +
             "}",
             // Error Template (JSON Format)
+            "" +
             "{" +
-                    "\"time\":%1$s.%2$s," +
-                    "\"type\":%3$s," +
-                    "\"message\":%4$s," +
-                    "\"stacktrace\":%5$s" +
+                "\"datetime\":\"%1$s\"," +
+                "\"type\":%2$s," +
+                "\"message\":%3$s," +
+                "\"stacktrace\":%4$s" +
             "}",
             // Escaper for JSON message
             Json::toJson
@@ -56,28 +59,31 @@ public enum FileAuditFormat {
     TSV(
             // Header
             "" +
-            "Time\t" +
+            "Date & Time\t" +
             "Type\t" +
             "Header Total Length\tHeader Raw\t" +
             "Body Service Code\tBody Service Text\tBody Raw\t" +
             "Error Message\tError Stack Trace",
             // Signal Template (TSV Format)
-            "%1$s.%2$s\t" +
-                "%3$s",                        // type
+            "" +
+            "%1$s\t" +
+            "%2$s",                            // type
             // Body Template (TSV Format)
-            "%1$s.%2$s\t"+
-                    "%3$s\t"+                  // type
-                    "%4$s\t" +                 // header.totalLength
-                    "%5$s\t" +                 // header.raw
-                    "%6$s\t" +                 // body.service.code
-                    "%7$s\t" +                 // body.service.text
-                    "%8$s",                    // body.raw
+            "" +
+                    "%1$s\t" +                 // date & time
+                    "%2$s\t" +                 // type
+                    "%3$s\t" +                 // header.totalLength
+                    "%4$s\t" +                 // header.raw
+                    "%5$s\t" +                 // body.service.code
+                    "%6$s\t" +                 // body.service.text
+                    "%7$s",                    // body.raw
             // Error Template (TSV Format)
-            "%1$s.%2$s\t" +
-                "%3$s"+                        // type
+            "" +
+                "%1$s\t" +                     // date & time
+                "%2$s" +                       // type
                 "\t\t\t\t\t\t" +               // reserved for (body)
-                "%4$s\t" +                     // error message
-                "%5$s",                        // stacktrace
+                "%3$s\t" +                     // error message
+                "%4$s",                        // stacktrace
             // Escaper for TSV message
                 (obj) -> {
                     return ((obj instanceof Object[]) ? Arrays.toString((Object[])obj) : String.valueOf(obj))

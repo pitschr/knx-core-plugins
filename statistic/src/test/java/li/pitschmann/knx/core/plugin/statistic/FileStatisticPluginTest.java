@@ -1,6 +1,5 @@
 /*
- * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,14 +53,14 @@ import static org.mockito.Mockito.when;
 /**
  * Test {@link FileStatisticPlugin}
  */
-public class FileStatisticPluginTest {
+class FileStatisticPluginTest {
 
     @Test
     @DisplayName("JSON: Test File Statistic")
-    public void statisticJson() throws IOException {
+    void statisticJson() throws IOException {
         final var path = Paths.get("target/test-FileStatisticPluginTest-statisticJson-" + UUID.randomUUID() + ".log");
         final var plugin = new FileStatisticPlugin();
-        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.JSON, TimeUnit.MINUTES.toMillis(1));
+        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.JSON);
 
         // start
         plugin.onInitialization(knxClientMock);
@@ -78,9 +77,11 @@ public class FileStatisticPluginTest {
         // we should have two statistics (one at start up and one at shutdown)
         final var lines = Files.readAllLines(path);
         assertThat(lines).hasSize(2);
-        assertThat(lines.get(0)).isEqualTo(
+        assertThat(lines.get(0)).containsPattern(
                 // @formatter:off
-                "{" +
+                "\\{" +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\\Q" +
                     "\"inbound\":{" +
                         "\"total\":{\"packets\":0,\"bytes\":0}," +
                         "\"search\":{\"request\":0,\"response\":0}," +
@@ -104,12 +105,15 @@ public class FileStatisticPluginTest {
                     "\"error\":{" +
                         "\"total\":{\"packets\":0,\"rate\":0.00}" +
                     "}" +
+                    "\\E" +
                 "}"
                 // @formatter:on
         );
-        assertThat(lines.get(1)).isEqualTo(
+        assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
-                "{" +
+                "\\{" +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\\Q" +
                     "\"inbound\":{" +
                         "\"total\":{\"packets\":10,\"bytes\":11}," +
                         "\"search\":{\"request\":100,\"response\":110}," +
@@ -133,6 +137,7 @@ public class FileStatisticPluginTest {
                     "\"error\":{" +
                         "\"total\":{\"packets\":14,\"rate\":1.50}" +
                     "}" +
+                    "\\E" +
                 "}"
                 // @formatter:on
         );
@@ -140,10 +145,10 @@ public class FileStatisticPluginTest {
 
     @Test
     @DisplayName("TSV: Test File Statistic")
-    public void statisticTsv() throws IOException {
+    void statisticTsv() throws IOException {
         final var path = Paths.get("target/test-FileStatisticPluginTest-statisticTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileStatisticPlugin();
-        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.TSV, TimeUnit.MINUTES.toMillis(1));
+        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.TSV);
 
         // start
         plugin.onInitialization(knxClientMock);
@@ -162,6 +167,8 @@ public class FileStatisticPluginTest {
         assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).isEqualTo(
                 // @formatter:off
+                // date time
+                "Date & Time\t" +
                 // total
                 "Inbound Packets\tInbound Bytes\t" +
                 "Outbound Packets\tOutbound Bytes\t" +
@@ -185,36 +192,38 @@ public class FileStatisticPluginTest {
                 // @formatter:on
 
         );
-        assertThat(lines.get(1)).isEqualTo(
+        assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
-                "0\t0\t" +                            // inbound total
-                "0\t0\t" +                            // outbound total
-                "0\t0.00\t" +                         // error total
-                "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t" +    // inbound search, description, connect, connectionState, disconnect
-                "0\t0\t0\t0\t" +                      // inbound tunneling, indication
-                "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t" +    // outbound search, description, connect, connectionState, disconnect
-                "0\t0\t0\t0"                          // outbound tunneling, indication
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +     // date & time
+                "0\t0\t" +                                                  // inbound total
+                "0\t0\t" +                                                  // outbound total
+                "0\t0.00\t" +                                               // error total
+                "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t" +                          // inbound search, description, connect, connectionState, disconnect
+                "0\t0\t0\t0\t" +                                            // inbound tunneling, indication
+                "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t" +                          // outbound search, description, connect, connectionState, disconnect
+                "0\t0\t0\t0"                                                // outbound tunneling, indication
                 // @formatter:on
         );
-        assertThat(lines.get(2)).isEqualTo(
+        assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
-                "10\t11\t" +                           // inbound total
-                "12\t13\t" +                           // outbound total
-                "14\t1.50\t" +                         // error total
-                "100\t110\t0\t210\t0\t310\t0\t410\t700\t710\t" +      // inbound search, description, connect, connectionState, disconnect
-                "500\t510\t0\t600\t" +                              // inbound tunneling, indication
-                "120\t130\t220\t0\t320\t0\t420\t0\t720\t730\t" +      // outbound search, description, connect, connectionState, disconnect
-                "520\t530\t610\t0"                                  // outbound tunneling, indication
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +     // date & time
+                "10\t11\t" +                                                // inbound total
+                "12\t13\t" +                                                // outbound total
+                "14\t1.50\t" +                                              // error total
+                "100\t110\t0\t210\t0\t310\t0\t410\t700\t710\t" +            // inbound search, description, connect, connectionState, disconnect
+                "500\t510\t0\t600\t" +                                      // inbound tunneling, indication
+                "120\t130\t220\t0\t320\t0\t420\t0\t720\t730\t" +            // outbound search, description, connect, connectionState, disconnect
+                "520\t530\t610\t0"                                          // outbound tunneling, indication
                 // @formatter:on
         );
     }
 
     @Test
     @DisplayName("TEXT: Test File Statistic")
-    public void statisticText() throws IOException {
+    void statisticText() throws IOException {
         final var path = Paths.get("target/test-FileStatisticPluginTest-statisticText-" + UUID.randomUUID() + ".log");
         final var plugin = new FileStatisticPlugin();
-        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.TEXT, TimeUnit.MINUTES.toMillis(1));
+        final var knxClientMock = mockKnxClient(path, FileStatisticFormat.TEXT);
 
         // start
         plugin.onInitialization(knxClientMock);
@@ -230,8 +239,9 @@ public class FileStatisticPluginTest {
 
         // we should have two statistics (one at start up and one at shutdown)
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(2 * 18); // 1 statistic output = 18 lines for TEXT
+        assertThat(lines).hasSize(2 * 19); // 1 statistic output = 19 lines for TEXT
         var i = 0;
+        assertThat(lines.get(i++)).containsPattern("Date & Time: \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z");
         assertThat(lines.get(i++)).isEqualTo("0 packets received (0 bytes)");
         assertThat(lines.get(i++)).isEqualTo("\t[Search          ] Request: 0, Response: 0");
         assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 0");
@@ -250,6 +260,7 @@ public class FileStatisticPluginTest {
         assertThat(lines.get(i++)).isEqualTo("\t[Disconnect      ] Request: 0, Response: 0");
         assertThat(lines.get(i++)).isEqualTo("0 errors (0.00%)");
         assertThat(lines.get(i++)).isEqualTo("-----------------------------------------------------------------");
+        assertThat(lines.get(i++)).containsPattern("Date & Time: \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z");
         assertThat(lines.get(i++)).isEqualTo("10 packets received (11 bytes)");
         assertThat(lines.get(i++)).isEqualTo("\t[Search          ] Request: 100, Response: 110");
         assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 210");
@@ -270,7 +281,58 @@ public class FileStatisticPluginTest {
         assertThat(lines.get(i++)).isEqualTo("-----------------------------------------------------------------");
     }
 
-    private KnxClient mockKnxClient(final Path path, final FileStatisticFormat format, final long intervalMs) {
+    @Test
+    @DisplayName("JSON: Multiple starts (file appending)")
+    void statisticMultipleStartsJson() throws IOException {
+        final var path = Paths.get("target/test-FileStatisticPluginTest-statisticMultipleStartsJson-" + UUID.randomUUID() + ".log");
+
+        for (int i=0; i<3; i++) {
+            final var plugin = new FileStatisticPlugin();
+            plugin.onInitialization(mockKnxClient(path, FileStatisticFormat.JSON));
+            plugin.onStart();
+            plugin.onShutdown();
+        }
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(3 * 2); // 3x (one at start and one at shutdown)
+    }
+
+    @Test
+    @DisplayName("TSV: Multiple starts (file appending)")
+    void statisticMultipleStartsTsv() throws IOException {
+        final var path = Paths.get("target/test-FileStatisticPluginTest-statisticMultipleStartsTsv-" + UUID.randomUUID() + ".log");
+
+        for (int i=0; i<3; i++) {
+            final var plugin = new FileStatisticPlugin();
+            plugin.onInitialization(mockKnxClient(path, FileStatisticFormat.TSV));
+            plugin.onStart();
+            plugin.onShutdown();
+        }
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(1 + 3 * 2); // 1x header, 3x (one at start and one at shutdown)
+    }
+
+    @Test
+    @DisplayName("TEXT: Multiple starts (file appending)")
+    void statisticMultipleStartsText() throws IOException {
+        final var path = Paths.get("target/test-FileStatisticPluginTest-statisticMultipleStartsText-" + UUID.randomUUID() + ".log");
+
+        for (int i=0; i<3; i++) {
+            final var plugin = new FileStatisticPlugin();
+            plugin.onInitialization(mockKnxClient(path, FileStatisticFormat.TEXT));
+            plugin.onStart();
+            plugin.onShutdown();
+        }
+
+        final var lines = Files.readAllLines(path);
+        // 3x iterations
+        // 2x (one at start and one at shutdown)
+        // 19x (one text statistic output has 19 lines)
+        assertThat(lines).hasSize(3 * 2 * 19);
+    }
+
+    private KnxClient mockKnxClient(final Path path, final FileStatisticFormat format) {
         final var knxClientMock = mock(KnxClient.class);
         final var configMock = mock(Config.class);
         final var emptyStatistic = mock(KnxStatistic.class);
@@ -280,7 +342,7 @@ public class FileStatisticPluginTest {
 
         when(configMock.getValue(eq(FileStatisticPlugin.PATH))).thenReturn(path);
         when(configMock.getValue(eq(FileStatisticPlugin.FORMAT))).thenReturn(format);
-        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL_MS))).thenReturn(intervalMs);
+        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL_MS))).thenReturn(TimeUnit.MINUTES.toMillis(1));
 
         when(knxClientMock.getStatistic()).thenReturn(emptyStatistic);
         return knxClientMock;

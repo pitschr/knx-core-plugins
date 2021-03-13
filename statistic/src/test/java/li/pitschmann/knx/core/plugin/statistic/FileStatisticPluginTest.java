@@ -289,12 +289,12 @@ class FileStatisticPluginTest {
         for (int i=0; i<3; i++) {
             final var plugin = new FileStatisticPlugin();
             plugin.onInitialization(mockKnxClient(path, FileStatisticFormat.JSON));
-            plugin.onStart();
+            Sleeper.milliseconds(100); // sleep bit, otherwise shutdown may close the file too quickly
             plugin.onShutdown();
         }
 
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(3 * 2); // 3x (one at start and one at shutdown)
+        assertThat(lines).hasSize(3 * 2); // 3 iterations * 2 (one at init and one at shutdown)
     }
 
     @Test
@@ -305,12 +305,12 @@ class FileStatisticPluginTest {
         for (int i=0; i<3; i++) {
             final var plugin = new FileStatisticPlugin();
             plugin.onInitialization(mockKnxClient(path, FileStatisticFormat.TSV));
-            plugin.onStart();
+            Sleeper.milliseconds(100); // sleep bit, otherwise shutdown may close the file too quickly
             plugin.onShutdown();
         }
 
         final var lines = Files.readAllLines(path);
-        assertThat(lines).hasSize(1 + 3 * 2); // 1x header, 3x (one at start and one at shutdown)
+        assertThat(lines).hasSize(1 + 3 * 2); // 1x header, 3 iterations * 2 (one at init and one at shutdown)
     }
 
     @Test
@@ -321,14 +321,14 @@ class FileStatisticPluginTest {
         for (int i=0; i<3; i++) {
             final var plugin = new FileStatisticPlugin();
             plugin.onInitialization(mockKnxClient(path, FileStatisticFormat.TEXT));
-            plugin.onStart();
+            Sleeper.milliseconds(100); // sleep bit, otherwise shutdown may close the file too quickly
             plugin.onShutdown();
         }
 
         final var lines = Files.readAllLines(path);
-        // 3x iterations
-        // 2x (one at start and one at shutdown)
-        // 19x (one text statistic output has 19 lines)
+        // 3 iterations
+        // 2 (one at start and one at shutdown)
+        // 19 (one text statistic output has 19 lines)
         assertThat(lines).hasSize(3 * 2 * 19);
     }
 
@@ -342,7 +342,7 @@ class FileStatisticPluginTest {
 
         when(configMock.getValue(eq(FileStatisticPlugin.PATH))).thenReturn(path);
         when(configMock.getValue(eq(FileStatisticPlugin.FORMAT))).thenReturn(format);
-        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL_MS))).thenReturn(TimeUnit.MINUTES.toMillis(1));
+        when(configMock.getValue(eq(FileStatisticPlugin.INTERVAL_MS))).thenReturn(Long.MAX_VALUE);
 
         when(knxClientMock.getStatistic()).thenReturn(emptyStatistic);
         return knxClientMock;

@@ -63,7 +63,7 @@ class FileAuditPluginTest {
         assertThat(lines.get(0)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\"type\":\"init\"" +
                 "}"
                 // @formatter:on
@@ -72,7 +72,7 @@ class FileAuditPluginTest {
         assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\"type\":\"start\"" +
                 "}"
                 // @formatter:on
@@ -81,7 +81,7 @@ class FileAuditPluginTest {
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"incoming\"," +
                     "\"header\":{" +
@@ -103,7 +103,7 @@ class FileAuditPluginTest {
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\"type\":\"shutdown\"" +
                 "}"
                 // @formatter:on
@@ -130,7 +130,7 @@ class FileAuditPluginTest {
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"outgoing\"," + //
                     "\"header\":{" +
@@ -167,7 +167,7 @@ class FileAuditPluginTest {
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"error\"," +
                     "\"message\":\"I'm a \\\"Runtime\\tException\\\"!\"," +
@@ -212,21 +212,21 @@ class FileAuditPluginTest {
         // init
         assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
                 "init"
                 // @formatter:on
         );
         // start
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
                 "start"
                 // @formatter:on
         );
         // incoming
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
                 "\\Q" +                                     // start pattern quote
                 "incoming\t" +
                 "9\t0x06 10 02 05 00 09\t" +                // header
@@ -237,7 +237,7 @@ class FileAuditPluginTest {
         // shutdown
         assertThat(lines.get(4)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
                 "shutdown"
                 // @formatter:on
         );
@@ -262,7 +262,7 @@ class FileAuditPluginTest {
         assertThat(lines).hasSize(5);
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
                 "\\Q" +                                 // start pattern quote
                 "outgoing\t" +
                 "8\t0x06 10 04 21 00 08\t" +            // header
@@ -288,7 +288,7 @@ class FileAuditPluginTest {
         assertThat(lines).hasSize(5);
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
                 "\\Q" +                            // start pattern quote
                 "error\t\t\t\t\t\t" +
                 "I'm a \"RuntimeException\"!\t" +  // \t removed, because it is not allowed in tab-separated format

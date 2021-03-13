@@ -80,7 +80,7 @@ class FileStatisticPluginTest {
         assertThat(lines.get(0)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" +
                     "\"inbound\":{" +
                         "\"total\":{\"packets\":0,\"bytes\":0}," +
@@ -112,7 +112,7 @@ class FileStatisticPluginTest {
         assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\"," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" +
                     "\"inbound\":{" +
                         "\"total\":{\"packets\":10,\"bytes\":11}," +
@@ -194,7 +194,7 @@ class FileStatisticPluginTest {
         );
         assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +     // date & time
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +     // date & time
                 "0\t0\t" +                                                  // inbound total
                 "0\t0\t" +                                                  // outbound total
                 "0\t0.00\t" +                                               // error total
@@ -206,7 +206,7 @@ class FileStatisticPluginTest {
         );
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
-                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z\t" +     // date & time
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +     // date & time
                 "10\t11\t" +                                                // inbound total
                 "12\t13\t" +                                                // outbound total
                 "14\t1.50\t" +                                              // error total
@@ -241,7 +241,7 @@ class FileStatisticPluginTest {
         final var lines = Files.readAllLines(path);
         assertThat(lines).hasSize(2 * 19); // 1 statistic output = 19 lines for TEXT
         var i = 0;
-        assertThat(lines.get(i++)).containsPattern("Date & Time: \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z");
+        assertThat(lines.get(i++)).containsPattern("Date & Time: \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z");
         assertThat(lines.get(i++)).isEqualTo("0 packets received (0 bytes)");
         assertThat(lines.get(i++)).isEqualTo("\t[Search          ] Request: 0, Response: 0");
         assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 0");
@@ -260,7 +260,7 @@ class FileStatisticPluginTest {
         assertThat(lines.get(i++)).isEqualTo("\t[Disconnect      ] Request: 0, Response: 0");
         assertThat(lines.get(i++)).isEqualTo("0 errors (0.00%)");
         assertThat(lines.get(i++)).isEqualTo("-----------------------------------------------------------------");
-        assertThat(lines.get(i++)).containsPattern("Date & Time: \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6}Z");
+        assertThat(lines.get(i++)).containsPattern("Date & Time: \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z");
         assertThat(lines.get(i++)).isEqualTo("10 packets received (11 bytes)");
         assertThat(lines.get(i++)).isEqualTo("\t[Search          ] Request: 100, Response: 110");
         assertThat(lines.get(i++)).isEqualTo("\t[Description     ] Request: 0, Response: 210");

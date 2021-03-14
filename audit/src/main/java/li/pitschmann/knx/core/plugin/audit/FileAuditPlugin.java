@@ -1,6 +1,5 @@
 /*
- * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +56,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      */
     public static final EnumConfigValue<FileAuditFormat> FORMAT = new EnumConfigValue<>("format", FileAuditFormat.class, () -> FileAuditFormat.JSON);
     private static final Logger log = LoggerFactory.getLogger(FileAuditPlugin.class);
-    private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
+    private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd}";
 
     private Path path;
     private FileAuditFormat format;
@@ -85,7 +84,7 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
                 .file(baseFile)
                 .filePattern(rolloverFile)
                 .policy(DailyRotationPolicy.getInstance())
-                .append(false);
+                .append(true);
 
         // append header rotation callback if present
         final var header = format.getHeader();
@@ -124,13 +123,11 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
 
     @Override
     public void onError(final Throwable throwable) {
-        final var now = Instant.now();
         writeToAuditFile(String.format(format.getErrorTemplate(), //
-                now.getEpochSecond(), // #1
-                now.getNano(), // #2
-                format.escape(AuditType.ERROR), // #3
-                format.escape(throwable.getMessage()), // #4
-                format.escape(throwable.getStackTrace()) // #5
+                Instant.now(),                              // #1
+                format.escape(AuditType.ERROR),             // #2
+                format.escape(throwable.getMessage()),      // #3
+                format.escape(throwable.getStackTrace())    // #4
         ));
     }
 
@@ -141,17 +138,15 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param body body to be printed
      */
     private void auditBody(final AuditType type, final Body body) {
-        final var now = Instant.now();
         final var header = Header.of(body);
         writeToAuditFile(String.format(format.getBodyTemplate(), //
-                now.getEpochSecond(), // #1
-                now.getNano(), // #2
-                format.escape(type), // #3
-                format.escape(header.getTotalLength()), // #4
-                format.escape(ByteFormatter.formatHexAsString(header.toByteArray())), // #5
-                format.escape(ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes())), // #6
-                format.escape(body.getServiceType().name()), // #7
-                format.escape(ByteFormatter.formatHexAsString(body.toByteArray())) // #8
+                Instant.now(),                                                                          // #1
+                format.escape(type),                                                                    // #2
+                format.escape(header.getTotalLength()),                                                 // #3
+                format.escape(ByteFormatter.formatHexAsString(header.toByteArray())),                   // #4
+                format.escape(ByteFormatter.formatHexAsString(body.getServiceType().getCodeAsBytes())), // #5
+                format.escape(body.getServiceType().name()),                                            // #6
+                format.escape(ByteFormatter.formatHexAsString(body.toByteArray()))                      // #7
         ));
     }
 
@@ -161,11 +156,9 @@ public final class FileAuditPlugin implements ObserverPlugin, ExtensionPlugin {
      * @param type audit type
      */
     private void auditSignal(final AuditType type) {
-        final var now = Instant.now();
         writeToAuditFile(String.format(format.getSignalTemplate(), //
-                now.getEpochSecond(), // #1
-                now.getNano(), // #2
-                format.escape(type) // #3
+                Instant.now(),      // #1
+                format.escape(type) // #2
         ));
     }
 

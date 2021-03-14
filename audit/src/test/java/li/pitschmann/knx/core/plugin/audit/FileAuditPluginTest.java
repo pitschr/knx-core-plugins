@@ -1,6 +1,5 @@
 /*
- * KNX Link - A library for KNX Net/IP communication
- * Copyright (C) 2019 Pitschmann Christoph
+ * Copyright (C) 2021 Pitschmann Christoph
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +39,11 @@ import static org.mockito.Mockito.when;
 /**
  * Test {@link FileAuditPlugin}
  */
-public class FileAuditPluginTest {
+class FileAuditPluginTest {
 
     @Test
     @DisplayName("JSON: Test File Audit Signal and Incoming")
-    public void auditIncomingBodyJson() throws IOException {
+    void auditIncomingBodyJson() throws IOException {
         final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBodyJson-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
 
@@ -64,25 +63,25 @@ public class FileAuditPluginTest {
         assertThat(lines.get(0)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\"type\":\"init\"" +
-                "\\}"
+                "}"
                 // @formatter:on
         );
         // start
         assertThat(lines.get(1)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\"type\":\"start\"" +
-                "\\}"
+                "}"
                 // @formatter:on
         );
         // incoming
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"incoming\"," +
                     "\"header\":{" +
@@ -97,23 +96,23 @@ public class FileAuditPluginTest {
                         "\"raw\":\"0x11 22 33\"" +
                     "}" +
                     "\\E" + // end pattern quote
-                "\\}"
+                "}"
                 // @formatter:on
         );
         // shutdown
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\"type\":\"shutdown\"" +
-                "\\}"
+                "}"
                 // @formatter:on
         );
     }
 
     @Test
     @DisplayName("JSON: Test File Audit Outgoing")
-    public void auditOutgoingBodyJson() throws IOException {
+    void auditOutgoingBodyJson() throws IOException {
         final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBodyJson-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
 
@@ -131,7 +130,7 @@ public class FileAuditPluginTest {
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"outgoing\"," + //
                     "\"header\":{" +
@@ -146,14 +145,14 @@ public class FileAuditPluginTest {
                         "\"raw\":\"0x22 33\"" +
                     "}" +
                     "\\E" + // end pattern quote
-                "\\}"
+                "}"
                 // @formatter:on
         );
     }
 
     @Test
     @DisplayName("JSON: Test File Audit Error")
-    public void auditOnErrorJson() throws IOException {
+    void auditOnErrorJson() throws IOException {
         final var path = Paths.get("target/test-FileAuditPluginTest-auditOnErrorJson-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
         final var exceptionMock = mockException();
@@ -168,7 +167,7 @@ public class FileAuditPluginTest {
         assertThat(lines.get(2)).containsPattern(
                 // @formatter:off
                 "\\{" +
-                    "\"time\":\\d+\\.\\d+," +
+                    "\"datetime\":\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\"," +
                     "\\Q" + // start pattern quote
                     "\"type\":\"error\"," +
                     "\"message\":\"I'm a \\\"Runtime\\tException\\\"!\"," +
@@ -184,7 +183,7 @@ public class FileAuditPluginTest {
 
     @Test
     @DisplayName("TSV: Test File Audit Signal and Incoming")
-    public void auditIncomingBodyTsv() throws IOException {
+    void auditIncomingBodyTsv() throws IOException {
         final var path = Paths.get("target/test-FileAuditPluginTest-auditIncomingBodyTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
 
@@ -202,8 +201,8 @@ public class FileAuditPluginTest {
 
         // header
         assertThat(lines.get(0)).isEqualTo(
-                // @formatter:off
-            "Time\t" +
+            // @formatter:off
+            "Date & Time\t" +
             "Type\t" +
             "Header Total Length\tHeader Raw\t" +
             "Body Service Code\tBody Service Text\tBody Raw\t" +
@@ -211,27 +210,42 @@ public class FileAuditPluginTest {
             // @formatter:on
         );
         // init
-        assertThat(lines.get(1)).containsPattern("\\d+\\.\\d+\tinit");
+        assertThat(lines.get(1)).containsPattern(
+                // @formatter:off
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
+                "init"
+                // @formatter:on
+        );
         // start
-        assertThat(lines.get(2)).containsPattern("\\d+\\.\\d+\tstart");
+        assertThat(lines.get(2)).containsPattern(
+                // @formatter:off
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
+                "start"
+                // @formatter:on
+        );
         // incoming
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
-                "\\d+\\.\\d+\t" +
-                        "\\Q" +  // start pattern quote
-                        "incoming\t" +
-                        "9\t0x06 10 02 05 00 09\t" + // header
-                        "0x02 05\tCONNECT_REQUEST\t0x33 44 55" + // body
-                        "\\E" // end pattern quote
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
+                "\\Q" +                                     // start pattern quote
+                "incoming\t" +
+                "9\t0x06 10 02 05 00 09\t" +                // header
+                "0x02 05\tCONNECT_REQUEST\t0x33 44 55" +    // body
+                "\\E"                                       // end pattern quote
                 // @formatter:on
         );
         // shutdown
-        assertThat(lines.get(4)).containsPattern("\\d+\\.\\d+\tshutdown");
+        assertThat(lines.get(4)).containsPattern(
+                // @formatter:off
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
+                "shutdown"
+                // @formatter:on
+        );
     }
 
     @Test
     @DisplayName("TSV: Test File Audit Outgoing")
-    public void auditOutgoingBodyTsv() throws IOException {
+    void auditOutgoingBodyTsv() throws IOException {
         final var path = Paths.get("target/test-FileAuditPluginTest-auditOutgoingBodyTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
 
@@ -248,19 +262,19 @@ public class FileAuditPluginTest {
         assertThat(lines).hasSize(5);
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
-                "\\d+\\.\\d+\t" +
-                        "\\Q" +  // start pattern quote
-                        "outgoing\t" +
-                        "8\t0x06 10 04 21 00 08\t" + // header
-                        "0x04 21\tTUNNELING_ACK\t0x44 55" + // body
-                        "\\E" // end pattern quote
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
+                "\\Q" +                                 // start pattern quote
+                "outgoing\t" +
+                "8\t0x06 10 04 21 00 08\t" +            // header
+                "0x04 21\tTUNNELING_ACK\t0x44 55" +     // body
+                "\\E"                                   // end pattern quote
                 // @formatter:on
         );
     }
 
     @Test
     @DisplayName("TSV: Test File Audit Error")
-    public void auditOnErrorTsv() throws IOException {
+    void auditOnErrorTsv() throws IOException {
         final var path = Paths.get("target/test-FileAuditPluginTest-auditOnErrorTsv-" + UUID.randomUUID() + ".log");
         final var plugin = new FileAuditPlugin();
         final var exceptionMock = mockException();
@@ -274,14 +288,46 @@ public class FileAuditPluginTest {
         assertThat(lines).hasSize(5);
         assertThat(lines.get(3)).containsPattern(
                 // @formatter:off
-                "\\d+\\.\\d+\t" +
-                        "\\Q" +  // start pattern quote
-                        "error\t\t\t\t\t\t" +
-                        "I'm a \"RuntimeException\"!\t" +  // \t removed, because it is not allowed in tab-separated format
-                        "[org.class.Foo.add(Foo.java:123), org.class.Bar.addAll(Bar.java:456)]" +
-                        "\\E" // end pattern quote
+                "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d+Z\t" +
+                "\\Q" +                            // start pattern quote
+                "error\t\t\t\t\t\t" +
+                "I'm a \"RuntimeException\"!\t" +  // \t removed, because it is not allowed in tab-separated format
+                "[org.class.Foo.add(Foo.java:123), org.class.Bar.addAll(Bar.java:456)]" +
+                "\\E"                              // end pattern quote
                 // @formatter:on
         );
+    }
+
+    @Test
+    @DisplayName("JSON: Multiple starts (file appending)")
+    void auditMultipleStartsJson() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditMultipleStartsJson-" + UUID.randomUUID() + ".log");
+
+        for (int i=0; i<3; i++) {
+            final var plugin = new FileAuditPlugin();
+            plugin.onInitialization(mockKnxClient(path, FileAuditFormat.JSON));
+            plugin.onStart();
+            plugin.onShutdown();
+        }
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(3 * 3); // 3x init, start and shutdown
+    }
+
+    @Test
+    @DisplayName("TSV: Multiple starts (file appending)")
+    void auditMultipleStartsTsv() throws IOException {
+        final var path = Paths.get("target/test-FileAuditPluginTest-auditMultipleStartsTsv-" + UUID.randomUUID() + ".log");
+
+        for (int i=0; i<3; i++) {
+            final var plugin = new FileAuditPlugin();
+            plugin.onInitialization(mockKnxClient(path, FileAuditFormat.TSV));
+            plugin.onStart();
+            plugin.onShutdown();
+        }
+
+        final var lines = Files.readAllLines(path);
+        assertThat(lines).hasSize(1 + 3 * 3); // 1x header, 3x init, start and shutdown
     }
 
     private KnxClient mockKnxClient(final Path path, final FileAuditFormat format) {
@@ -316,5 +362,4 @@ public class FileAuditPluginTest {
         );
         return exception;
     }
-
 }

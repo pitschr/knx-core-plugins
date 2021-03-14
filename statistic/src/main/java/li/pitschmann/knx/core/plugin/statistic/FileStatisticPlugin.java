@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2021 Pitschmann Christoph
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package li.pitschmann.knx.core.plugin.statistic;
 
 import com.vlkan.rfos.RotatingFileOutputStream;
@@ -32,6 +49,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
@@ -58,7 +76,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
     public static final LongConfigValue INTERVAL_MS = new LongConfigValue("intervalMs", () -> 5 * 60 * 1000L, x -> x >= 10000);
 
     private static final Logger log = LoggerFactory.getLogger(FileStatisticPlugin.class);
-    private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd-HHmmss-SSS}";
+    private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd}";
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor(true);
     private KnxClient client;
@@ -89,7 +107,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
                 .file(baseFile)
                 .filePattern(rolloverFile)
                 .policy(DailyRotationPolicy.getInstance())
-                .append(false);
+                .append(true);
 
         // append header rotation callback if present
         final var header = format.getHeader();
@@ -129,40 +147,41 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
         final var statistics = this.client.getStatistic();
         final var statisticsFormatted = String.format( //
                 format.getTemplate(),
-
-                statistics.getNumberOfBodyReceived(),                              // %1
-                statistics.getNumberOfBytesReceived(),                             // %2
-                statistics.getNumberOfBodySent(),                                  // %3
-                statistics.getNumberOfBytesSent(),                                 // %4
-                statistics.getNumberOfErrors(),                                    // %5
-                statistics.getErrorRate(),                                         // %6
+                Instant.now(),                                                         // %1
+                // Total
+                statistics.getNumberOfBodyReceived(),                                  // %2
+                statistics.getNumberOfBytesReceived(),                                 // %3
+                statistics.getNumberOfBodySent(),                                      // %4
+                statistics.getNumberOfBytesSent(),                                     // %5
+                statistics.getNumberOfErrors(),                                        // %6
+                statistics.getErrorRate(),                                             // %7
                 // Search
-                statistics.getNumberOfBodyReceived(SearchRequestBody.class),       // %7
-                statistics.getNumberOfBodyReceived(SearchResponseBody.class),      // %8
-                statistics.getNumberOfBodySent(SearchRequestBody.class),           // %9
-                statistics.getNumberOfBodySent(SearchResponseBody.class),          // %10
+                statistics.getNumberOfBodyReceived(SearchRequestBody.class),           // %8
+                statistics.getNumberOfBodyReceived(SearchResponseBody.class),          // %9
+                statistics.getNumberOfBodySent(SearchRequestBody.class),               // %10
+                statistics.getNumberOfBodySent(SearchResponseBody.class),              // %11
                 // Description
-                statistics.getNumberOfBodyReceived(DescriptionResponseBody.class), // %7 // %11
-                statistics.getNumberOfBodySent(DescriptionRequestBody.class),      // %8 // %12
+                statistics.getNumberOfBodyReceived(DescriptionResponseBody.class),     // %12
+                statistics.getNumberOfBodySent(DescriptionRequestBody.class),          // %13
                 // Connect
-                statistics.getNumberOfBodyReceived(ConnectResponseBody.class),     // %9  // %13
-                statistics.getNumberOfBodySent(ConnectRequestBody.class),          // %10 // %14
+                statistics.getNumberOfBodyReceived(ConnectResponseBody.class),         // %14
+                statistics.getNumberOfBodySent(ConnectRequestBody.class),              // %15
                 // Connection State
-                statistics.getNumberOfBodyReceived(ConnectionStateResponseBody.class), // %11  // %15
-                statistics.getNumberOfBodySent(ConnectionStateRequestBody.class),      // %12  // %16
+                statistics.getNumberOfBodyReceived(ConnectionStateResponseBody.class), // %16
+                statistics.getNumberOfBodySent(ConnectionStateRequestBody.class),      // %17
                 // Tunneling
-                statistics.getNumberOfBodyReceived(TunnelingRequestBody.class), // %13 // %17
-                statistics.getNumberOfBodyReceived(TunnelingAckBody.class),     // %15 // %18
-                statistics.getNumberOfBodySent(TunnelingRequestBody.class),     // %14 // %19
-                statistics.getNumberOfBodySent(TunnelingAckBody.class),         // %16 // %20
+                statistics.getNumberOfBodyReceived(TunnelingRequestBody.class),        // %18
+                statistics.getNumberOfBodyReceived(TunnelingAckBody.class),            // %19
+                statistics.getNumberOfBodySent(TunnelingRequestBody.class),            // %20
+                statistics.getNumberOfBodySent(TunnelingAckBody.class),                // %21
                 // Disconnect
-                statistics.getNumberOfBodyReceived(DisconnectRequestBody.class),  // %17 // %21
-                statistics.getNumberOfBodyReceived(DisconnectResponseBody.class), // %19 // %22
-                statistics.getNumberOfBodySent(DisconnectRequestBody.class),      // %18 // %23
-                statistics.getNumberOfBodySent(DisconnectResponseBody.class),     // %20 // %24
+                statistics.getNumberOfBodyReceived(DisconnectRequestBody.class),       // %22
+                statistics.getNumberOfBodyReceived(DisconnectResponseBody.class),      // %23
+                statistics.getNumberOfBodySent(DisconnectRequestBody.class),           // %24
+                statistics.getNumberOfBodySent(DisconnectResponseBody.class),          // %25
                 // Indication
-                statistics.getNumberOfBodyReceived(RoutingIndicationBody.class), // %21 // %25
-                statistics.getNumberOfBodySent(RoutingIndicationBody.class)      // %22 // %26
+                statistics.getNumberOfBodyReceived(RoutingIndicationBody.class),       // %26
+                statistics.getNumberOfBodySent(RoutingIndicationBody.class)            // %27
         );
         // @formatter:on
 

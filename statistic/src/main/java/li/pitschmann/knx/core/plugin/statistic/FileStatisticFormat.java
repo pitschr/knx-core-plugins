@@ -16,28 +16,29 @@ public enum FileStatisticFormat {
             // Body Template
             "" +
             "{" +
+                "\"datetime\":\"%1$s\"," +
                 "\"inbound\":{" +
-                    "\"total\":{\"packets\":%1$s,\"bytes\":%2$s}," +
-                    "\"search\":{\"request\":%7$s,\"response\":%8$s}," +
-                    "\"description\":{\"request\":0,\"response\":%11$s}," +
-                    "\"connect\":{\"request\":0,\"response\":%13$s}," +
-                    "\"connectionState\":{\"request\":0,\"response\":%15$s}," +
-                    "\"tunneling\":{\"request\":%17$s,\"acknowledge\":%18$s}," +
-                    "\"indication\":{\"request\":0,\"response\":%25$s}," +
-                    "\"disconnect\":{\"request\":%21$s,\"response\":%22$s}" +
+                    "\"total\":{\"packets\":%2$s,\"bytes\":%3$s}," +
+                    "\"search\":{\"request\":%8$s,\"response\":%9$s}," +
+                    "\"description\":{\"request\":0,\"response\":%12$s}," +
+                    "\"connect\":{\"request\":0,\"response\":%14$s}," +
+                    "\"connectionState\":{\"request\":0,\"response\":%16$s}," +
+                    "\"tunneling\":{\"request\":%18$s,\"acknowledge\":%19$s}," +
+                    "\"indication\":{\"request\":0,\"response\":%26$s}," +
+                    "\"disconnect\":{\"request\":%22$s,\"response\":%23$s}" +
                 "}," +
                 "\"outbound\":{" +
-                    "\"total\":{\"packets\":%3$s,\"bytes\":%4$s}," +
-                    "\"search\":{\"request\":%9$s,\"response\":%10$s}," +
-                    "\"description\":{\"request\":%12$s,\"response\":0}," +
-                    "\"connect\":{\"request\":%14$s,\"response\":0}," +
-                    "\"connectionState\":{\"request\":%16$s,\"response\":0}," +
-                    "\"tunneling\":{\"request\":%19$s,\"acknowledge\":%20$s}," +
-                    "\"indication\":{\"request\":%26$s,\"response\":0}," +
-                    "\"disconnect\":{\"request\":%23$s,\"response\":%24$s}" +
+                    "\"total\":{\"packets\":%4$s,\"bytes\":%5$s}," +
+                    "\"search\":{\"request\":%10$s,\"response\":%11$s}," +
+                    "\"description\":{\"request\":%13$s,\"response\":0}," +
+                    "\"connect\":{\"request\":%15$s,\"response\":0}," +
+                    "\"connectionState\":{\"request\":%17$s,\"response\":0}," +
+                    "\"tunneling\":{\"request\":%20$s,\"acknowledge\":%21$s}," +
+                    "\"indication\":{\"request\":%27$s,\"response\":0}," +
+                    "\"disconnect\":{\"request\":%24$s,\"response\":%25$s}" +
                 "}," +
                 "\"error\":{" +
-                    "\"total\":{\"packets\":%5$s,\"rate\":%6$.2f}" +
+                    "\"total\":{\"packets\":%6$s,\"rate\":%7$.2f}" +
                 "}" +
             "}"
     ),
@@ -47,6 +48,7 @@ public enum FileStatisticFormat {
     TSV(
             // Header
             "" +
+            "Date & Time\t" +
             "Inbound Packets\tInbound Bytes\t" +
             "Outbound Packets\tOutbound Bytes\t" +
             "Error Packets\tError Rate (%)\t" +
@@ -69,23 +71,24 @@ public enum FileStatisticFormat {
 
             // Body Template
             "" +
-            "%1$s\t%2$s\t" +       // inbound total
-            "%3$s\t%4$s\t" +       // outbound total
-            "%5$s\t%6$.2f\t" +     // error total
-            "%7$s\t%8$s\t" +       // inbound search
-            "0\t%11$s\t" +         // inbound description
-            "0\t%13$s\t" +         // inbound connect
-            "0\t%15$s\t" +         // inbound connectionState
-            "%21$s\t%22$s\t" +     // inbound disconnect
-            "%17$s\t%18$s\t" +     // inbound tunneling
-            "0\t%25$s\t" +         // inbound indication
-            "%9$s\t%10$s\t" +      // outbound search
-            "%12$s\t0\t" +         // outbound description
-            "%14$s\t0\t" +         // outbound connect
-            "%16$s\t0\t" +         // outbound connectionState
-            "%23$s\t%24$s\t" +     // outbound disconnect
-            "%19$s\t%20$s\t" +     // outbound tunneling
-            "%26$s\t0"             // outbound indication
+            "%1$s\t" +             // date & time in ISO 8601 format
+            "%2$s\t%3$s\t" +       // inbound total
+            "%4$s\t%5$s\t" +       // outbound total
+            "%6$s\t%7$.2f\t" +     // error total
+            "%8$s\t%9$s\t" +       // inbound search
+            "0\t%12$s\t" +         // inbound description
+            "0\t%14$s\t" +         // inbound connect
+            "0\t%16$s\t" +         // inbound connectionState
+            "%22$s\t%23$s\t" +     // inbound disconnect
+            "%18$s\t%19$s\t" +     // inbound tunneling
+            "0\t%26$s\t" +         // inbound indication
+            "%10$s\t%11$s\t" +     // outbound search
+            "%13$s\t0\t" +         // outbound description
+            "%15$s\t0\t" +         // outbound connect
+            "%17$s\t0\t" +         // outbound connectionState
+            "%24$s\t%25$s\t" +     // outbound disconnect
+            "%20$s\t%21$s\t" +     // outbound tunneling
+            "%27$s\t0"             // outbound indication
     ),
     /**
      * Statistic format should be in TEXT format
@@ -95,25 +98,25 @@ public enum FileStatisticFormat {
             "",
             // Body Template
             "" +
-            "" +
-            "%1$s packets received (%2$s bytes)%n" +                              // line #1
-            "\t[Search          ] Request: %7$s, Response: %8$s%n" +              // line #2
-            "\t[Description     ] Request: 0, Response: %11$s%n" +                // line #3
-            "\t[Connect         ] Request: 0, Response: %13$s%n" +                // line #4
-            "\t[Connection State] Request: 0, Response: %15$s%n" +                // line #5
-            "\t[Tunneling       ] Request: %17$s, Acknowledge: %18$s%n" +         // line #6
-            "\t[Indication      ] Request: 0, Response: %25$s%n" +                // line #7
-            "\t[Disconnect      ] Request: %21$s, Response: %22$s%n" +            // line #8
-            "%3$s packets sent (%4$s bytes)%n" +                                  // line #9
-            "\t[Search          ] Request: %9$s, Response: %10$s%n" +             // line #10
-            "\t[Description     ] Request: %12$s, Response: 0%n" +                // line #11
-            "\t[Connect         ] Request: %14$s, Response: 0%n" +                // line #12
-            "\t[Connection State] Request: %16$s, Response: 0%n" +                // line #13
-            "\t[Tunneling       ] Request: %19$s, Acknowledge: %20$s%n" +         // line #14
-            "\t[Indication      ] Request: %26$s, Response: 0%n" +                // line #15
-            "\t[Disconnect      ] Request: %23$s, Response: %24$s%n" +            // line #16
-            "%5$s errors (%6$.2f%%)%n" +                                          // line #17
-            "-----------------------------------------------------------------"   // line #18
+            "Date & Time: %1$s%n" +                                               // line #1
+            "%2$s packets received (%3$s bytes)%n" +                              // line #2
+            "\t[Search          ] Request: %8$s, Response: %9$s%n" +              // line #3
+            "\t[Description     ] Request: 0, Response: %12$s%n" +                // line #4
+            "\t[Connect         ] Request: 0, Response: %14$s%n" +                // line #5
+            "\t[Connection State] Request: 0, Response: %16$s%n" +                // line #6
+            "\t[Tunneling       ] Request: %18$s, Acknowledge: %19$s%n" +         // line #7
+            "\t[Indication      ] Request: 0, Response: %26$s%n" +                // line #8
+            "\t[Disconnect      ] Request: %22$s, Response: %23$s%n" +            // line #9
+            "%4$s packets sent (%5$s bytes)%n" +                                  // line #10
+            "\t[Search          ] Request: %10$s, Response: %11$s%n" +            // line #11
+            "\t[Description     ] Request: %13$s, Response: 0%n" +                // line #12
+            "\t[Connect         ] Request: %15$s, Response: 0%n" +                // line #13
+            "\t[Connection State] Request: %17$s, Response: 0%n" +                // line #14
+            "\t[Tunneling       ] Request: %20$s, Acknowledge: %21$s%n" +         // line #15
+            "\t[Indication      ] Request: %27$s, Response: 0%n" +                // line #16
+            "\t[Disconnect      ] Request: %24$s, Response: %25$s%n" +            // line #17
+            "%6$s errors (%7$.2f%%)%n" +                                          // line #18
+            "-----------------------------------------------------------------"   // line #19
     );
     // @formatter:on
 

@@ -22,7 +22,7 @@
     <packaging>pom</packaging>
     <groupId>li.pitschmann</groupId>
     <artifactId>knx-core-plugins</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1-SNAPSHOT</version>
     <name>KNX Core Plugins</name>
     <description>Plugins for KNX Core library to extend the core functionality with e.g. audit, statistic, REST API, ...</description>
     <url>https://github.com/pitschr/knx-core-plugins</url>
@@ -56,7 +56,7 @@
         <url>https://github.com/pitschr/knx-core-plugins</url>
         <connection>scm:git:https://github.com/pitschr/knx-core-plugins</connection>
         <developerConnection>scm:git:https://github.com/pitschr/knx-core-plugins</developerConnection>
-        <tag>knx-core-plugins-0.4.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <!-- Distribution (Maven Repository by Sonatype) -->

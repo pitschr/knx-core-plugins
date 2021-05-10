@@ -32,6 +32,7 @@ import org.junit.jupiter.api.DisplayName;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -107,7 +108,7 @@ public class WriteRequestControllerTest {
         final var groupAddress = TestUtils.randomGroupAddress();
 
         // mock no ack body was found
-        when(controller.getKnxClient().writeRequest(eq(groupAddress), any(DataPointValue.class))).thenReturn(false);
+        when(controller.getKnxClient().writeRequest(eq(groupAddress), any(DataPointValue.class), anyLong())).thenReturn(false);
 
         final var request = new WriteRequest();
         request.setGroupAddress(groupAddress);

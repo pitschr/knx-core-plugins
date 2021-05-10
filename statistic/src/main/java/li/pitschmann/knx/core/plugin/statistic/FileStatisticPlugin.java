@@ -39,7 +39,6 @@ import li.pitschmann.knx.core.plugin.ExtensionPlugin;
 import li.pitschmann.knx.core.plugin.LongConfigValue;
 import li.pitschmann.knx.core.plugin.PathConfigValue;
 import li.pitschmann.knx.core.utils.Closeables;
-import li.pitschmann.knx.core.utils.Executors;
 import li.pitschmann.knx.core.utils.Sleeper;
 import li.pitschmann.knx.core.utils.Strings;
 import org.slf4j.Logger;
@@ -52,6 +51,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Statistic plug-in to write the statistic to a file
@@ -78,7 +78,7 @@ public final class FileStatisticPlugin implements ExtensionPlugin {
     private static final Logger log = LoggerFactory.getLogger(FileStatisticPlugin.class);
     private static final String FILE_ROLLOVER_PATTERN = "-%d{yyyyMMdd}";
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor(true);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private KnxClient client;
     private Path path;
     private FileStatisticFormat format;

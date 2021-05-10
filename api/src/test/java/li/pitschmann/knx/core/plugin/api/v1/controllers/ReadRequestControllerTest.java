@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static li.pitschmann.knx.core.plugin.api.TestUtils.readJsonFile;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -103,7 +104,7 @@ public class ReadRequestControllerTest {
         request.setGroupAddress(TestUtils.randomGroupAddress());
 
         // mock no ack body was found
-        when(controller.getKnxClient().readRequest(any(GroupAddress.class))).thenReturn(false);
+        when(controller.getKnxClient().readRequest(any(GroupAddress.class), anyLong())).thenReturn(false);
 
         // Execution
         controller.readRequest(contextSpy, request);

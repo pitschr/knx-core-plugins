@@ -93,7 +93,7 @@ public final class WriteRequestController extends AbstractController {
         }
 
         // send write request
-        if (getKnxClient().writeRequest(groupAddress, value)) {
+        if (getKnxClient().writeRequest(groupAddress, value, 3000)) {
             log.debug("Acknowledge received for write request: {}", writeRequest);
             ctx.status(HttpServletResponse.SC_ACCEPTED);
             ctx.json(EMPTY_RESPONSE);

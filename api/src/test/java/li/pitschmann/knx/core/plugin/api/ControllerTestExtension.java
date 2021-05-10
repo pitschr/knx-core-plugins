@@ -43,9 +43,11 @@ import org.mockito.Mockito;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -123,8 +125,10 @@ public final class ControllerTestExtension
         when(knxClientMock.getStatusPool()).thenReturn(statusPoolMock);
         when(knxClientMock.getConfig(any(ConfigValue.class))).thenCallRealMethod();
         when(knxClientMock.getConfig().getProject()).thenReturn(xmlProject);
-        when(knxClientMock.readRequest(any(GroupAddress.class))).thenReturn(true);
-        when(knxClientMock.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(true);
+        when(knxClientMock.readRequest(any(GroupAddress.class))).thenReturn(CompletableFuture.completedFuture(true));
+        when(knxClientMock.readRequest(any(GroupAddress.class), anyLong())).thenReturn(true);
+        when(knxClientMock.writeRequest(any(GroupAddress.class), any(DataPointValue.class))).thenReturn(CompletableFuture.completedFuture(true));
+        when(knxClientMock.writeRequest(any(GroupAddress.class), any(DataPointValue.class), anyLong())).thenReturn(true);
 
         // append pre-defined Group Addresses from XML Project to the KNX Client Mock
         if (Mockito.mockingDetails(xmlProject).isSpy()) {

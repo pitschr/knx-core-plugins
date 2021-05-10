@@ -64,7 +64,7 @@ public final class ReadRequestController extends AbstractController {
         }
 
         // send read request
-        if (!getKnxClient().readRequest(groupAddress)) {
+        if (!getKnxClient().readRequest(groupAddress, 3000)) {
             log.warn("No or unexpected acknowledge received for read request: {}", readRequest);
             ctx.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             ctx.json(EMPTY_RESPONSE);

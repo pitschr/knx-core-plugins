@@ -1,6 +1,6 @@
 # KNX Core Plugin: Statistic
 
-Used to log the statistic of KNX traffic in a pre-defined interval (default: 60 seconds).
+Used to log the statistic of KNX traffic in a pre-defined interval (default: 5 minutes).
 The format of statistic file can be either in: JSON, TSV (tab-separated) and plain text.
 
 JSON:

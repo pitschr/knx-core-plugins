@@ -113,6 +113,7 @@
                 <groupId>li.pitschmann</groupId>
                 <artifactId>knx-core</artifactId>
                 <version>${version.knx-core}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Utility -->
@@ -120,13 +121,6 @@
                 <groupId>com.vlkan.rfos</groupId>
                 <artifactId>rotating-fos</artifactId>
                 <version>${version.rotating-fos}</version>
-            </dependency>
-
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${version.slf4j}</version>
             </dependency>
 
             <!-- Test -->
